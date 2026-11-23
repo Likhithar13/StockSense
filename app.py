@@ -23,7 +23,7 @@ from extensions import db
 from models import Product, Sale
 
 
-# Load environment variables from .env
+# Load environment variables
 load_dotenv()
 
 PIXABAY_API_KEY = os.getenv("PIXABAY_API_KEY")
@@ -66,15 +66,17 @@ def get_product_images(products, app):
             continue
 
         try:
+            search_query = (
+                f"computer {product.name}"
+                if product.name.lower() in ["mouse", "keyboard"]
+                else f"{product.name} {product.category}"
+            )
+
             response = requests.get(
                 "https://pixabay.com/api/",
                 params={
                     "key": PIXABAY_API_KEY,
-                    "q": (
-    f"computer {product.name}"
-    if product.name.lower() in ["mouse", "keyboard"]
-    else f"{product.name} {product.category}"
-),
+                    "q": search_query,
                     "image_type": "photo",
                     "safesearch": "true",
                     "per_page": 3
@@ -160,6 +162,10 @@ def create_app(test_config=None):
         app.config.update(test_config)
 
     db.init_app(app)
+
+    # IMPORTANT: Create database tables for Render/Gunicorn
+    with app.app_context():
+        db.create_all()
 
     # --------------------------------------------------
     # DASHBOARD
@@ -517,9 +523,6 @@ def create_app(test_config=None):
 app = create_app()
 
 if __name__ == "__main__":
-
-    with app.app_context():
-        db.create_all()
 
     app.run(
         host="0.0.0.0",
