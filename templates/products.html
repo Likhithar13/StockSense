@@ -1,0 +1,124 @@
+
+{% extends "base.html" %}
+{% block title %}Products · StockSense{% endblock %}
+
+{% block content %}
+<h1>Products</h1>
+<p class="text-secondary">Add, edit and delete inventory products.</p>
+
+<div class="card p-3 mb-4">
+    <h5>Add product</h5>
+    <form method="post" class="row g-2">
+        <div class="col-md-3">
+            <input class="form-control" name="name" placeholder="Product name" required>
+        </div>
+        <div class="col-md-2">
+            <input class="form-control" name="category" placeholder="Category">
+        </div>
+        <div class="col-md-2">
+            <input class="form-control" name="price" type="number" min="0" step=".01" placeholder="Price" required>
+        </div>
+        <div class="col-md-2">
+            <input class="form-control" name="quantity" type="number" min="0" placeholder="Stock qty" required>
+        </div>
+        <div class="col-md-2">
+            <input class="form-control" name="reorder_level" type="number" min="0" value="5" placeholder="Alert level">
+        </div>
+        <div class="col-md-1">
+            <button class="btn btn-primary w-100">Add</button>
+        </div>
+    </form>
+</div>
+
+<div class="card">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Alert at</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in products %}
+                <tr>
+                    <td>
+                        {% set img = product_images.get(p.id) %}
+                        {% if img and img.image %}
+                            <img src="{{ url_for('static', filename=img.image) }}"
+                                 alt="{{ p.name }}"
+                                 width="65" height="65"
+                                 style="object-fit:contain; border-radius:8px;">
+                            {% if img.source %}
+                                <br>
+                                <small>
+                                    <a href="{{ img.source }}" target="_blank" rel="noopener">Pixabay</a>
+                                </small>
+                            {% endif %}
+                        {% else %}
+                            <div class="bg-light rounded text-secondary text-center"
+                                 style="width:65px;height:65px;display:flex;align-items:center;justify-content:center;">
+                                No image
+                            </div>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        <form id="update-{{ p.id }}" method="post"
+                              action="{{ url_for('update_product', product_id=p.id) }}">
+                        </form>
+                        <input form="update-{{ p.id }}" class="form-control form-control-sm"
+                               name="name" value="{{ p.name }}" required>
+                    </td>
+
+                    <td>
+                        <input form="update-{{ p.id }}" class="form-control form-control-sm"
+                               name="category" value="{{ p.category }}">
+                    </td>
+
+                    <td>
+                        <input form="update-{{ p.id }}" class="form-control form-control-sm"
+                               name="price" type="number" min="0" step=".01"
+                               value="{{ p.price }}" required>
+                    </td>
+
+                    <td>
+                        <input form="update-{{ p.id }}" class="form-control form-control-sm"
+                               name="quantity" type="number" min="0"
+                               value="{{ p.quantity }}" required>
+                    </td>
+
+                    <td>
+                        <input form="update-{{ p.id }}" class="form-control form-control-sm"
+                               name="reorder_level" type="number" min="0"
+                               value="{{ p.reorder_level }}" required>
+                    </td>
+
+                    <td>
+                        <div class="d-flex gap-1">
+                            <button form="update-{{ p.id }}"
+                                    class="btn btn-sm btn-outline-primary">Save</button>
+
+                            <form method="post"
+                                  action="{{ url_for('delete_product', product_id=p.id) }}"
+                                  onsubmit="return confirm('Delete this product and its sales history?')">
+                                <button class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7">No products yet. Add your first product above.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

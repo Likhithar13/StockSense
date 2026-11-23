@@ -1,0 +1,8 @@
+{% extends "base.html" %}{% block title %}Sales · StockSense{% endblock %}{% block content %}
+<h1>Record a sale</h1><p class="text-secondary">A successful sale automatically reduces available stock.</p>
+<div class="card p-3 mb-4"><form method="post" class="row g-2 align-items-end">
+<div class="col-md-6"><label class="form-label">Product</label><select class="form-select" name="product_id" required><option value="">Choose product</option>{% for p in products %}<option value="{{ p.id }}">{{ p.name }} — {{ p.quantity }} available</option>{% endfor %}</select></div>
+<div class="col-md-3"><label class="form-label">Quantity sold</label><input class="form-control" type="number" name="quantity" min="1" required></div>
+<div class="col-md-3"><button class="btn btn-primary w-100">Record sale</button></div></form></div>
+<div class="card"><div class="card-header">Latest sales</div><div class="table-responsive"><table class="table mb-0"><tr><th>Product</th><th>Quantity</th><th>Date/time</th></tr>
+{% for s in sales %}<tr><td>{{ s.product.name }}</td><td>{{ s.quantity }}</td><td>{{ s.sold_at.strftime('%d %b %Y %H:%M') }}</td></tr>{% else %}<tr><td colspan="3">No sales yet.</td></tr>{% endfor %}</table></div></div>{% endblock %}

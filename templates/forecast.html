@@ -1,0 +1,6 @@
+{% extends "base.html" %}{% block title %}Forecast · StockSense{% endblock %}{% block content %}
+<h1>Demand forecast & reorder suggestions</h1><p class="text-secondary">Estimated demand for the next week using recorded weekly sales.</p>
+<div class="alert alert-info">Forecasts are decision-support estimates, not automatic purchase orders. Review supplier lead times and seasonality before ordering.</div>
+<div class="card"><div class="table-responsive"><table class="table mb-0 align-middle"><thead><tr><th>Product</th><th>Current stock</th><th>Next-week demand</th><th>Method</th><th>Validation error</th><th>Suggested order</th></tr></thead><tbody>
+{% for row in rows %}<tr><td>{{ row.product.name }}</td><td>{{ row.product.quantity }}</td><td>{{ row.demand }} units</td><td>{{ row.method }}</td><td>{% if row.error is not none %}{{ row.error }}%{% else %}—{% endif %}</td><td><strong>{{ row.suggested_order }} units</strong></td></tr>
+{% else %}<tr><td colspan="6">Add products and record sales to see forecasts.</td></tr>{% endfor %}</tbody></table></div></div>{% endblock %}

@@ -1,0 +1,5 @@
+body { background: #f5f7fb; }
+.navbar-brand { letter-spacing: .3px; }
+.card { border: 0; box-shadow: 0 2px 12px rgba(25, 40, 70, .06); }
+.metric { min-height: 118px; }
+.table th { white-space: nowrap; }
